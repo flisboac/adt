@@ -84,7 +84,7 @@ adt_API size_t adt_getcount(adt_Container *C);
 adt_API adt_Value adt_getkeytype(adt_Container *C);
 adt_API adt_Value adt_getvaluetype(adt_Container *C);
 adt_API adt_Value adt_getdefault(adt_Container *C);
-adt_API adt_ECategory[] adt_getcategories(adt_Container *C);
+adt_API adt_ECategory* adt_getcategories(adt_Container *C, adt_ECategory *list);
 
 adt_API int adt_canreserve(adt_Container *C);
 adt_API int adt_canresize(adt_Container *C);

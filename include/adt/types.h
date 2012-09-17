@@ -1,6 +1,7 @@
 #ifndef ADT_TYPES_H_
 #define ADT_TYPES_H_
 
+#include "adtdefs.h"
 #include <stddef.h>
 
 /* Rationale:
@@ -31,6 +32,8 @@
  */
 #define adt_NOPOS ((size_t)-1)
 
+#define adt_MAXCATEGORIES 8
+
 #define adt_Value_isvalid(v) \
     adt_EValueType_isvalid((adt_Value)v.vtype)
 
@@ -45,7 +48,43 @@
  
 #define adt_EIteratorMode_isvalid(t) \
     (t > adt_ITER_NONE && t < adt_ITER_MAX)
-    
+
+#define adt_UVALUE_DECL  \
+    /* Library types */  \
+    adt_Container *ctnr; \
+    adt_Pair *pair; \
+    adt_Node *node; \
+    adt_Iterator *iter; \
+    \
+    /* Booleans */ \
+    int b; \
+    \
+    /* Integers */ \
+    char c; \
+    unsigned char uc; \
+    short int s; \
+    unsigned short int us; \
+    int i; \
+    unsigned int ui; \
+    long int l; \
+    unsigned long int ul; \
+    \
+    /* Floats */ \
+    float f; \
+    double d; \
+    long double ld; \
+    \
+    /* Pointers */ \
+    void *vp; \
+    char *cp; \
+    wchar_t *wcp; \
+    \
+    /* stddef types */ \
+    size_t sz; \
+    ptrdiff_t pd; \
+    wchar_t wc
+
+
 /**
  * Enumeration of all the library's error codes.
  */
@@ -227,11 +266,11 @@ typedef union adt_UPvalue_t {
     
     void **vp;
     char **cp;
-    wchar_t **wp;
+    wchar_t **wcp;
     
     size_t *sz;
     ptrdiff_t *pd;
-    wchar_t *w;  
+    wchar_t *wc;  
 } adt_UPvalue;
 
 /**
@@ -239,36 +278,7 @@ typedef union adt_UPvalue_t {
  */
 typedef union adt_UValue_t {
     
-    /* Library types */
-    adt_Container *ctnr;
-    adt_Pair *pair;
-    adt_Node *node;
-    adt_Iterator *iter;
-
-    /* Integers */
-    char c;
-    unsigned char uc;
-    short int s;
-    unsigned short int us;
-    int i;
-    unsigned int ui;
-    long int l;
-    unsigned long int ul;
-
-    /* Floats */
-    float f;
-    double d;
-    long double ld;
-
-    /* Pointers */
-    void *vp;
-    char *cp;
-    wchar_t *wp;
-
-    /* stddef types */
-    size_t sz;
-    ptrdiff_t pd;
-    wchar_t w;
+    adt_UVALUE_DECL;
 } adt_UValue;
 
 /**
@@ -279,14 +289,17 @@ typedef union adt_UValue_t {
  */
 typedef struct adt_Value_t {
     
-    adt_UValue uvalue;
+    union {
+        adt_UValue uvalue;
+        adt_UVALUE_DECL;
+    };
     adt_EValueType vtype;
     union {
         size_t esize;    /**< In case of pointers, tells the size, in bytes, of
                               the pointed element's type. Important mostly
                               for custom value types (@c adt_VTYPE_CUSTOM). */
     };
-    suze_t vsize;
+    size_t vsize;
 } adt_Value;
 
 /**

@@ -1,6 +1,9 @@
 #ifndef ADT_ALGORITHM_H_
 #define ADT_ALGORITHM_H_
 
+#include "adtdefs.h"
+#include "adt/types.h"
+
 /**
  * @defgroup adt_algo_cmp Comparison
  * @{

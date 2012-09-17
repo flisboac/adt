@@ -33,16 +33,17 @@ def configure(ctx):
 
 
 def build(ctx):
-    ctx(
-          sources = ctx.glob(sources)
+    ctx.stlib(
+          source = ctx.path.ant_glob(sources)
         , target = APPNAME
         , defines = ['adt_STATIC', 'adt_BUILDING']
-        , features = 'cc stlib'
+        , includes = ['include']
+        #, cflags = ['-E']
     )
-    ctx(
-          sources = ctx.glob(sources)
+    ctx.shlib(
+          source = ctx.path.ant_glob(sources)
         , target = APPNAME
+        , includes = ['include']
         , defines = ['adt_BUILDING']
-        , features = 'cc shlib'
     )
     

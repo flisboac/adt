@@ -2,6 +2,99 @@
 #include <stdarg.h>
 #include "vector.h"
 
+const adtX_ContainerApi adtX_api_vector = {
+    
+    /*
+     * [ N E W ]
+     */
+    
+    adtX_Vector_new
+	, adtX_Vector_newwith
+	, adtX_Vector_free
+	, adtX_Vector_copy
+    
+    /*
+     * [ A C E S S ]
+     */
+    
+	, adtX_Vector_has
+	, adtX_Vector_hasvalue
+    
+	, adtX_Vector_get
+	, adtX_Vector_ocurrences
+	, adtX_Vector_getfirst
+	, adtX_Vector_getlast
+    
+	, adtX_Vector_set
+    
+	, adtX_Vector_pushr
+	, adtX_Vector_pushl
+	, adtX_Vector_pushr
+	, adtX_Vector_popr
+	, adtX_Vector_popl
+	, adtX_Vector_popr
+    
+	, adtX_Vector_insert
+	, adtX_Vector_remove
+	, adtX_Vector_removeall
+    
+	, adtX_Vector_index
+	, adtX_Vector_rindex
+    
+	, adtX_Vector_rotl
+	, adtX_Vector_rotr
+	, adtX_Vector_crotl
+	, adtX_Vector_crotr
+    
+    /*
+     * [ A C T I O N ]
+     */
+    
+	, adtX_Vector_sort
+	, adtX_Vector_resize
+	, adtX_Vector_reserve
+	, adtX_Vector_swap
+	, adtX_Vector_rehash
+	, adtX_Vector_clear
+    
+    /*
+     * [ S T A T E ]
+     */
+    
+	, adtX_Vector_getoptions
+	, adtX_Vector_getecode
+	, adtX_Vector_getlen
+	, adtX_Vector_getcap
+	, adtX_Vector_getcount
+	, adtX_Vector_getkeytype
+	, adtX_Vector_getvaluetype
+	, adtX_Vector_getdefault
+	, adtX_Vector_getcategories
+    
+	, adtX_Vector_canreserve
+	, adtX_Vector_canresize
+	, adtX_Vector_canchange
+	, adtX_Vector_isempty
+	, adtX_Vector_isautofree
+	, adtX_Vector_isautoorder
+    
+	, adtX_Vector_setdefault
+	, adtX_Vector_setimmutable
+	, adtX_Vector_setresizemult
+	, adtX_Vector_setautofree
+	, adtX_Vector_setautoorder
+	, adtX_Vector_sethashf
+	, adtX_Vector_setfinalizerf
+	, adtX_Vector_setcomparef
+    
+    /*
+     * [ I T E R ]
+     */
+    
+	, adtX_Vector_iterator
+	, adtX_Vector_iteratorat
+};
+
 
 /*
  * [ N E W ] ===================================================================
@@ -334,12 +427,12 @@ adtX_Vector_getdefault(
 	
 }
 
-adt_ECategory[] 
+adt_ECategory*
 adtX_Vector_getcategories(
-	adt_Container *C
+	adt_Container *C, adt_ECategory *list
 ) {
 	
-	
+	return list;
 }
 
 
@@ -476,97 +569,3 @@ adtX_Vector_iteratorat(
 	
 	
 }
-
-
-const adtX_ContainerApi adtX_api_vector = {
-    
-    /*
-     * [ N E W ]
-     */
-    
-    adtX_Vector_new
-	, adtX_Vector_newwith
-	, adtX_Vector_free
-	, adtX_Vector_copy
-    
-    /*
-     * [ A C E S S ]
-     */
-    
-	, adtX_Vector_has
-	, adtX_Vector_hasvalue
-    
-	, adtX_Vector_get
-	, adtX_Vector_ocurrences
-	, adtX_Vector_getfirst
-	, adtX_Vector_getlast
-    
-	, adtX_Vector_set
-    
-	, adtX_Vector_pushr
-	, adtX_Vector_pushl
-	, adtX_Vector_pushr
-	, adtX_Vector_popr
-	, adtX_Vector_popl
-	, adtX_Vector_popr
-    
-	, adtX_Vector_insert
-	, adtX_Vector_remove
-	, adtX_Vector_removeall
-    
-	, adtX_Vector_index
-	, adtX_Vector_rindex
-    
-	, adtX_Vector_rotl
-	, adtX_Vector_rotr
-	, adtX_Vector_crotl
-	, adtX_Vector_crotr
-    
-    /*
-     * [ A C T I O N ]
-     */
-    
-	, adtX_Vector_sort
-	, adtX_Vector_resize
-	, adtX_Vector_reserve
-	, adtX_Vector_swap
-	, adtX_Vector_rehash
-	, adtX_Vector_clear
-    
-    /*
-     * [ S T A T E ]
-     */
-    
-	, adtX_Vector_getoptions
-	, adtX_Vector_getecode
-	, adtX_Vector_getlen
-	, adtX_Vector_getcap
-	, adtX_Vector_getcount
-	, adtX_Vector_getkeytype
-	, adtX_Vector_getvaluetype
-	, adtX_Vector_getdefault
-	, adtX_Vector_getcategories
-    
-	, adtX_Vector_canreserve
-	, adtX_Vector_canresize
-	, adtX_Vector_canchange
-	, adtX_Vector_isempty
-	, adtX_Vector_isautofree
-	, adtX_Vector_isautoorder
-    
-	, adtX_Vector_setdefault
-	, adtX_Vector_setimmutable
-	, adtX_Vector_setresizemult
-	, adtX_Vector_setautofree
-	, adtX_Vector_setautoorder
-	, adtX_Vector_sethashf
-	, adtX_Vector_setfinalizerf
-	, adtX_Vector_setcomparef
-    
-    /*
-     * [ I T E R ]
-     */
-    
-	, adtX_Vector_iterator
-	, adtX_Vector_iteratorat
-};

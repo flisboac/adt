@@ -1,8 +1,4 @@
-
-#include <stdarg.h>
-#include "adtdefs.h"
 #include "objects.h"
-
 
 /*
  * [ N E W ] ===================================================================
@@ -69,7 +65,7 @@ adt_IAPI size_t adtX_Vector_getcount(adt_Container *C);
 adt_IAPI adt_Value adtX_Vector_getkeytype(adt_Container *C);
 adt_IAPI adt_Value adtX_Vector_getvaluetype(adt_Container *C);
 adt_IAPI adt_Value adtX_Vector_getdefault(adt_Container *C);
-adt_IAPI adt_ECategory[] adtX_Vector_getcategories(adt_Container *C);
+adt_IAPI adt_ECategory* adtX_Vector_getcategories(adt_Container *C, adt_ECategory *list);
 
 adt_IAPI int adtX_Vector_canreserve(adt_Container *C);
 adt_IAPI int adtX_Vector_canresize(adt_Container *C);

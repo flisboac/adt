@@ -1,8 +1,15 @@
 #include <wchar.h>
 #include <string.h>
-#include "adt/util.h"
+#include <stdlib.h>
 #include "objects.h"
+#include "adt/util.h"
 
+
+const adt_ECategory adtX_categories[adt_CAT_MAX][adt_MAXCATEGORIES] = {
+    
+    /* adt_TYPE_NONE   */  {adt_CAT_NONE}
+    /* adt_TYPE_VECTOR */, {adt_CAT_SEQ, adt_CAT_LIST, adt_CAT_NONE}
+};
 
 
 int
@@ -12,33 +19,39 @@ adt_fitscategory(
     
     int valid = 0;
     adt_ECategory category;
-    adt_ECategory[] categories;
+    adt_ECategory categories[adt_MAXCATEGORIES];
     
     if (adt_EType_isvalid(ctype) && adt_ECategory_isvalid(cat)) {
         
-        categories = adt_getcategoriesfor(ctype);
+        adt_getcategoriesfor(ctype, categories);
         do {
             
             if (category == cat) {
                 valid = 1;
                 break;
             }
-        } while (category != adt_CAT_NULL);
+        } while (category != adt_CAT_NONE);
     }
     
     return valid;
 }
 
 
-adt_ECategory[]
+adt_ECategory*
 adt_getcategoriesfor(
-    adt_ECtype ctype
+    adt_EType ctype, adt_ECategory *list
 ) {
-    
-    adt_ECategory list[] = {adt_CAT_NONE};
+
+    int i = 0;
+    adt_ECategory cat = adt_CAT_NONE;
+    list[0] = adt_CAT_NONE;
     
     if (adt_EType_isvalid(ctype))
-        list = adtX_categories[ctype];
+        do {
+            cat = adtX_categories[ctype][i];
+            list[i] = cat;
+            cat++;
+        } while (cat != adt_CAT_NONE);
     
     return list;
 }
@@ -58,7 +71,7 @@ adt_initoptions(
         options->load = adtX_DEFAULTLOAD;
         options->ctnr = NULL;
         options->from = NULL;
-        options->ecode = adt_ECODE_OK;
+        options->ecode = adt_EC_OK;
         options->defaultval = adtNULL;
         options->allocf = realloc;
         options->finalizef = NULL;
@@ -192,9 +205,9 @@ adt_valuecompare(
         case adt_VTYPE_SIZET:
             switch (other.vtype) {
                 case adt_VTYPE_SIZET:
-                    if (obj.st < other.st)
+                    if (obj.sz < other.sz)
                         result = adt_CMP_LT;
-                    else if (obj.st > other.st)
+                    else if (obj.sz > other.sz)
                         result = adt_CMP_GT;
                     else 
                         result = adt_CMP_EQ;
@@ -299,9 +312,9 @@ adt_Value adt_Value_container(
     
     if (C) {
     	V.ctnr = C;
-        switch(C->type) {
-            case adt_TYPE_VECTOR: V.ctnr = sizeof(adtX_Vector); break;
-        }
+        V.esize = 0;
+        if (C->api->sizeofcontainer)
+            V.esize = C->api->sizeofcontainer();
     }
 	return V;
 }
@@ -340,11 +353,11 @@ adt_Value adt_Value_iterator(
     V.vsize = 1;
     V.vtype = adt_VTYPE_ITER;
     
-    if (I && I->C) {
+    if (I && I->ctnr) {
         V.iter = I;
-        switch(I->C->type) {
-            case adt_TYPE_VECTOR: V.ctnr = sizeof(adtX_VectorIterator); break;
-        }
+        V.esize = 0;
+        if (I->ctnr->api->sizeofiterator)
+            V.esize = I->ctnr->api->sizeofiterator();
     }
 	return V;
 }
@@ -546,7 +559,7 @@ adt_Value adt_Value_charp(
 }
 
 adt_Value adt_Value_wcharp(
-	wchar_t wcp
+	wchar_t *wcp
 ) {
 	
 	adt_Value V;
@@ -555,7 +568,7 @@ adt_Value adt_Value_wcharp(
     
     V.wcp = wcp;
     V.esize = sizeof(wchar_t);
-    if (wcp) V.vsize = wcslen(cp);
+    if (wcp) V.vsize = wcslen(wcp);
 	return V;
 }
 

@@ -1,5 +1,5 @@
 #ifndef ADT_UTIL_H_
-#define
+#define ADT_UTIL_H_
 
 #include "adtdefs.h"
 #include "adt/types.h"
@@ -11,7 +11,7 @@
  */
 
 adt_API int adt_fitscategory(adt_EType ctype, adt_ECategory cat);
-adt_API adt_ECategory[] adt_getcategoriesfor(adt_ECtype ctype);
+adt_API adt_ECategory* adt_getcategoriesfor(adt_EType ctype, adt_ECategory *list);
 adt_API adt_Options* adt_initoptions(adt_Options *options);
 adt_API adt_Options* adt_copyoptions(adt_Options *from, adt_Options *to);
 adt_API adt_ECmpResult adt_valuecompare(adt_Value obj, adt_Value other);
@@ -65,7 +65,7 @@ adt_API adt_Value adt_Value_ldouble(long double ld);
 
 adt_API adt_Value adt_Value_voidp(void *vp);
 adt_API adt_Value adt_Value_charp(char *cp);
-adt_API adt_Value adt_Value_wcharp(wchar_t wcp);
+adt_API adt_Value adt_Value_wcharp(wchar_t *wcp);
 #define adtVP(x) adt_Value_voidp(x)
 #define adtCP(x) adt_Value_charp(x)
 #define adtWP(x) adt_Value_wcharp(x)

@@ -7,7 +7,7 @@
 #   define adt_FIMPORT __declspec(dllimport)
 #   define adt_FEXPORT __declspec(dllexport)
 #   define adt_DIMPORT adt_FIMPORT
-#   define adt_FEXPORT adt_FEXPORT
+#   define adt_DEXPORT adt_FEXPORT
 /* Else, standard C qualifiers should be sufficient for the front-end API.
  */
 #else

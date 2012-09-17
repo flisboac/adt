@@ -1,15 +1,14 @@
+#ifndef ADTX_OBJECTS_H_
+#define ADTX_OBJECTS_H_
+
 
 #include <stddef.h>
+#include <stdarg.h>
+#include "adtdefs.h"
+#include "adt/types.h"
 
 #define adtX_DEFAULTCAP  4
 #define adtX_DEFAULTLOAD 10
-
-
-adt_IDATA const adtX_ContainerApi adtX_api_vector;
-
-adt_IDATA const adt_ECategory[] adtX_categories[];
-adt_IDATA const int adtX_implemented[];
-adt_IDATA const adtX_ContainerApi const* adtX_apis[];
 
 /*
  * [ A U X I L I A R Y ] =======================================================
@@ -96,7 +95,7 @@ typedef struct adtX_ContainerApi_t {
     adt_Value (*getkeytype)(adt_Container *C);
     adt_Value (*getvaluetype)(adt_Container *C);
     adt_Value (*getdefault)(adt_Container *C);
-    adt_ECategory[] (*getcategories)(adt_Container *C);
+    adt_ECategory *(*getcategories)(adt_Container *C, adt_ECategory* list);
     
     int (*canreserve)(adt_Container *C);
     int (*canresize)(adt_Container *C);
@@ -120,6 +119,12 @@ typedef struct adtX_ContainerApi_t {
     
     adt_Iterator* (*iterator)(adt_Container *C, adt_EIteratorMode mode, int autofree);
     adt_Iterator* (*iteratorat)(adt_Container *C, adt_EIteratorMode mode, int autofree, va_list args);
+
+    /*
+     * [ O T H E R S ]
+     */
+    size_t (*sizeofcontainer)();
+    size_t (*sizeofiterator)();
 } adtX_ContainerApi;
 
 
@@ -143,8 +148,10 @@ typedef struct adtX_IteratorApi_t {
 } adtX_IteratorApi;
 
 /*
- * [ B A S I C ] ===============================================================
+ * [ V A L U E S ] =============================================================
  */
+
+adt_IDATA const adtX_ContainerApi adtX_api_vector;
 
 typedef struct adtX_ContainerBase_t {
     
@@ -164,7 +171,7 @@ typedef struct adtX_IteratorBase_t {
     int started;
     adt_FIterate fn;
     void* fnstate;
-};
+} adtX_IteratorBase;
 
 struct adt_Container_t {
     
@@ -202,3 +209,6 @@ typedef struct adtX_VectorIterator_t {
 } adtX_VectorIterator;
 
 
+adt_IAPI const adtX_ContainerApi** adtX_apis();
+
+#endif
