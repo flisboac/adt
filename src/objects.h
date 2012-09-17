@@ -208,6 +208,6 @@ typedef struct adtX_VectorIterator_t {
     size_t idx;
 } adtX_VectorIterator;
 
-adt_IDATA const adtX_ContainerApi* adtX_apis2[adt_TYPE_MAX];
+adt_IDATA const adtX_ContainerApi* adtX_apis[adt_TYPE_MAX];
 
 #endif
