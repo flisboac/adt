@@ -17,7 +17,7 @@ adt_IAPI size_t adtX_Vector_has(adt_Container *C, va_list args);
 adt_IAPI size_t adtX_Vector_hasvalue(adt_Container *C, va_list args);
 
 adt_IAPI adt_Value adtX_Vector_get(adt_Container *C, va_list args);
-adt_IAPI adt_Value adtX_Vector_ocurrences(adt_Container *C, va_list args);
+adt_IAPI size_t adtX_Vector_ocurrences(adt_Container *C, va_list args);
 adt_IAPI adt_Value adtX_Vector_getfirst(adt_Container *C);
 adt_IAPI adt_Value adtX_Vector_getlast(adt_Container *C);
 
@@ -32,7 +32,7 @@ adt_IAPI adt_Value adtX_Vector_popr(adt_Container *C);
 
 adt_IAPI adt_EEcode adtX_Vector_insert(adt_Container *C, va_list args);
 adt_IAPI adt_Value adtX_Vector_remove(adt_Container *C, va_list args);
-adt_IAPI adt_Value adtX_Vector_removeall(adt_Container *C, va_list args);
+adt_IAPI adt_Value adtX_Vector_removeoccurrences(adt_Container *C, va_list args);
 
 adt_IAPI adt_Value adtX_Vector_index(adt_Container *C, va_list args);
 adt_IAPI adt_Value adtX_Vector_rindex(adt_Container *C, va_list args);
@@ -76,7 +76,7 @@ adt_IAPI int adtX_Vector_isautoorder(adt_Container *C);
 
 adt_IAPI adt_Value adtX_Vector_setdefault(adt_Container *C);
 adt_IAPI adt_EEcode adtX_Vector_setimmutable(adt_Container *C);
-adt_IAPI int adtX_Vector_setresizemult(adt_Container *C, size_t mult);
+adt_IAPI adt_EEcode adtX_Vector_setresizemult(adt_Container *C, size_t mult);
 adt_IAPI adt_EEcode adtX_Vector_setautofree(adt_Container *C, int flag);
 adt_IAPI adt_EEcode adtX_Vector_setautoorder(adt_Container *C, int flag);
 adt_IAPI adt_EEcode adtX_Vector_sethashf(adt_Container *C, adt_FHash hashf);

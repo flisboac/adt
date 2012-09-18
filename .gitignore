@@ -15,3 +15,4 @@
 .lock-waf*
 waf-1.*
 build
+.c9*

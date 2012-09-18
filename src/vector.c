@@ -162,7 +162,7 @@ adtX_Vector_get(
 	
 }
 
-adt_Value 
+size_t 
 adtX_Vector_ocurrences(
 	adt_Container *C, va_list args
 ) {
@@ -248,7 +248,7 @@ adtX_Vector_remove(
 }
 
 adt_Value 
-adtX_Vector_removeall(
+adtX_Vector_removeoccurrences(
 	adt_Container *C, va_list args
 ) {
 	
@@ -501,7 +501,7 @@ adtX_Vector_setimmutable(
 	
 }
 
-int 
+adt_EEcode 
 adtX_Vector_setresizemult(
 	adt_Container *C, size_t mult
 ) {

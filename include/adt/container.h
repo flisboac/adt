@@ -25,7 +25,7 @@ adt_API size_t adt_hasvalue(adt_Container *C, ...);
 
 /* Get */
 adt_API adt_Value adt_get(adt_Container *C, ...);
-adt_API adt_Value adt_ocurrences(adt_Container *C, ...);
+adt_API size_t adt_ocurrences(adt_Container *C, ...);
 adt_API adt_Value adt_getfirst(adt_Container *C);
 adt_API adt_Value adt_getlast(adt_Container *C);
 #define adt_gettop adt_getfirst
@@ -47,7 +47,7 @@ adt_API adt_Value adt_popr(adt_Container *C);
 /* Insertion */
 adt_API adt_EEcode adt_insert(adt_Container *C, ...);
 adt_API adt_Value adt_remove(adt_Container *C, ...);
-adt_API adt_Value adt_removeall(adt_Container *C, ...);
+adt_API adt_Value adt_removeoccurrences(adt_Container *C, ...);
 
 /* Indexof */
 adt_API adt_Value adt_index(adt_Container *C, ...);
@@ -95,7 +95,7 @@ adt_API int adt_isautoorder(adt_Container *C);
 
 adt_API adt_Value adt_setdefault(adt_Container *C);
 adt_API adt_EEcode adt_setimmutable(adt_Container *C);
-adt_API int adt_setresizemult(adt_Container *C, size_t mult);
+adt_API adt_EEcode adt_setresizemult(adt_Container *C, size_t mult);
 adt_API adt_EEcode adt_setautofree(adt_Container *C, int flag);
 adt_API adt_EEcode adt_setautoorder(adt_Container *C, int flag);
 adt_API adt_EEcode adt_sethashf(adt_Container *C, adt_FHash hashf);

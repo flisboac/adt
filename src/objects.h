@@ -47,7 +47,7 @@ typedef struct adtX_ContainerApi_t {
     size_t (*hasvalue)(adt_Container *C, va_list args);
     
     adt_Value (*get)(adt_Container *C, va_list args);
-    adt_Value (*ocurrences)(adt_Container *C, va_list args);
+    size_t (*occurrences)(adt_Container *C, va_list args);
     adt_Value (*getfirst)(adt_Container *C);
     adt_Value (*getlast)(adt_Container *C);
     
@@ -62,7 +62,7 @@ typedef struct adtX_ContainerApi_t {
     
     adt_EEcode (*insert)(adt_Container *C, va_list args);
     adt_Value (*remove)(adt_Container *C, va_list args);
-    adt_Value (*removeall)(adt_Container *C, va_list args);
+    adt_Value (*removeoccurrences)(adt_Container *C, va_list args);
     
     adt_Value (*index)(adt_Container *C, va_list args);
     adt_Value (*rindex)(adt_Container *C, va_list args);
@@ -106,7 +106,7 @@ typedef struct adtX_ContainerApi_t {
     
     adt_Value (*setdefault)(adt_Container *C);
     adt_EEcode (*setimmutable)(adt_Container *C);
-    int (*setresizemult)(adt_Container *C, size_t mult);
+    adt_EEcode (*setresizemult)(adt_Container *C, size_t mult);
     adt_EEcode (*setautofree)(adt_Container *C, int flag);
     adt_EEcode (*setautoorder)(adt_Container *C, int flag);
     adt_EEcode (*sethashf)(adt_Container *C, adt_FHash hashf);
@@ -208,6 +208,6 @@ typedef struct adtX_VectorIterator_t {
     size_t idx;
 } adtX_VectorIterator;
 
-adt_IDATA const adtX_ContainerApi* adtX_apis[adt_TYPE_MAX];
+adt_IDATA const adtX_ContainerApi* adtX_apis2[adt_TYPE_MAX];
 
 #endif
