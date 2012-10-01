@@ -10,8 +10,6 @@
  * @{
  */
 
-adt_API int adt_fitscategory(adt_EType ctype, adt_ECategory cat);
-adt_API adt_ECategory* adt_getcategoriesfor(adt_EType ctype, adt_ECategory *list);
 adt_API adt_Options* adt_initoptions(adt_Options *options);
 adt_API adt_Options* adt_copyoptions(adt_Options *from, adt_Options *to);
 adt_API adt_ECmpResult adt_valuecompare(adt_Value obj, adt_Value other);
