@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 
 APPNAME = 'adt'
-VERSION = '0.1.0'
+MAJORVERSION = 0
+MINORVERSION = 1
+PATCHVERSION = 0
+RELEASENAME = 'beta'
+
+VERSION = '%d.%d.%d-%s' % (MAJORVERSION, MINORVERSION, PATCHVERSION, RELEASENAME)
+APPPREFIX = APPNAME + '_'
 
 top = '.'
 out = 'build'
@@ -16,7 +22,7 @@ def options(ctx):
 
 	# Options
 	ctx.add_option(
-		'-c', '--c-compiler'
+		'-C', '--c-compiler'
 		, dest = 'c_compiler'
 		, default = ''
 		, action = 'store'
@@ -36,7 +42,7 @@ def build(ctx):
     ctx.stlib(
           source = ctx.path.ant_glob(sources)
         , target = APPNAME
-        , defines = ['adt_STATIC', 'adt_BUILDING']
+        , defines = [APPPREFIX + 'STATIC', APPPREFIX + 'BUILDING']
         , includes = ['include']
         #, cflags = ['-E']
     )
@@ -44,6 +50,6 @@ def build(ctx):
           source = ctx.path.ant_glob(sources)
         , target = APPNAME
         , includes = ['include']
-        , defines = ['adt_BUILDING']
+        , defines = [APPPREFIX + 'BUILDING']
     )
     
