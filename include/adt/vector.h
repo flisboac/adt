@@ -1,9 +1,11 @@
 #ifndef ADT_VECTOR_H_
 #define ADT_VECTOR_H_
 
-#include "adtdefs.h"
+#include "adtdef.h"
 #include "adt/types.h"
 
+
+adt_DATA const adt_Api* adt_vectorapi;
 
 typedef struct adt_VectorOptions_t {
     

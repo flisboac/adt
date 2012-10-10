@@ -1,10 +1,14 @@
+/**
+ * @file include/adt.h
+ */
+
 #ifndef ADT_H_
 #define ADT_H_
 
 /*
  * Defines
  */
-#include "adtdefs.h"
+#include "adtdef.h"
 #include "adt/types.h"
 
 /*
@@ -17,7 +21,6 @@
 /*
  * Container implementations
  */
+#include "adt/vector.h"
 
-
-#endif
-
+#endif /* ADT_H_ */

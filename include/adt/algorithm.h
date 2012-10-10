@@ -1,7 +1,7 @@
 #ifndef ADT_ALGORITHM_H_
 #define ADT_ALGORITHM_H_
 
-#include "adtdefs.h"
+#include "adtdef.h"
 #include "adt/types.h"
 
 /*

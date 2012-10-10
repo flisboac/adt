@@ -1,35 +1,44 @@
-#ifndef ADT_BASE_H_
-#define ADT_BASE_H_
+/**
+ * @file include/adt/container.h
+ */
+
+#ifndef ADT_CONTAINER_H_
+#define ADT_CONTAINER_H_
 
 #include <stddef.h>
-#include "adtdefs.h"
+#include "adtdef.h"
 #include "adt/types.h"
 
 
-/*
- * [ D I S P O S A L ]
+/**
+ * @defgroup adt_ctnr_new Creation and Disposal
+ * @{
  */
-
 
 adt_API int adt_dispose(adt_Container *C);
 adt_API adt_Container* adt_copy(adt_Container *C);
 
 
-/*
- * [ S T A T E ]
+/**
+ * @}
+ * @defgroup adt_ctnr_state Container State
+ * @{
  */
 
 
 adt_API adt_Options* adt_getoptions(adt_Container *C, adt_Options *opts);
 adt_API adt_EEcode  adt_setoptions(adt_Container *C, adt_Options *opts);
-
 adt_API adt_FHash adt_gethashf(adt_Container *C);
-
 adt_API int adt_iscategory(adt_Container *C, adt_ECategory cat);
+adt_API adt_EEcode adt_getecode(adt_Container *C);
+adt_API adt_ECategory adt_getcategory(adt_Container *C);
+adt_API int* adt_getcategories(adt_Container *C, int* cats);
 
 
-/*
- * [ O P E R A T I O N S ]
+/**
+ * @}
+ * @defgroup adt_ctnr_oper Control Operations
+ * @{
  */
 
 
@@ -43,8 +52,10 @@ adt_API adt_EEcode adt_clear(adt_Container *C);
 adt_API adt_EEcode adt_rehash(adt_Container *C);
 
 
-/*
- * [ A C C E S S ]
+/**
+ * @}
+ * @defgroup adt_ctnr_access Data Access
+ * @{
  */
 
 
@@ -72,14 +83,16 @@ adt_API size_t adt_getoccurrences(adt_Container *C, ...);
 adt_API adt_Value adt_removeoccurrences(adt_Container *C, size_t amount, ...);
 
 
-/*
- * [ I T E R A T O R S ]
+/**
+ * @}
+ * @defgroup adt_ctnr_iter Iterators
+ * @{
  */
 
 
 adt_API adt_Iterator* adt_iterate(adt_Container *C, adt_EIteratorMode mode);
 adt_API adt_Iterator* adt_iterateat(adt_Container *C, adt_EIteratorMode mode, ...);
-adt_API void adt_Iterator_dispose(adt_Iterator *I);
+adt_API int adt_Iterator_dispose(adt_Iterator *I);
 #define adt_idispose adt_Iterator_dispose
 
 adt_API adt_Value adt_Iterator_actual(adt_Iterator *I);
@@ -109,4 +122,6 @@ adt_API adt_EEcode adt_Iterator_compare(adt_Iterator *I, adt_Iterator *O);
 #define adt_idel adt_Iterator_remove
 #define adt_icmp adt_Iterator_compare
 
-#endif
+/** @} */
+
+#endif /* ADT_CONTAINER_H_ */

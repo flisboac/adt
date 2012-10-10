@@ -1,5 +1,5 @@
 /**
- * @file adtcfg.h
+ * @file include/adtcfg.h
  */
 
 #ifndef ADTCFG_H_

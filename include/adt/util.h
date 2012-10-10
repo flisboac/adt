@@ -1,40 +1,27 @@
 #ifndef ADT_UTIL_H_
 #define ADT_UTIL_H_
 
-#include "adtdefs.h"
+#include <stddef.h>
+#include "adtdef.h"
 #include "adt/types.h"
 
-/**
- * @}
- * @ingroup adt_util_misc
- * @{
- */
-
-adt_API adt_Options* adt_initoptions(adt_Options *options);
-adt_API adt_Options* adt_copyoptions(adt_Options *from, adt_Options *to);
+adt_API adt_Options* adt_defaultoptions(adt_Options* O);
+adt_API void* adt_alloc(void* state, void* ptr, size_t sz, size_t align);
 adt_API adt_ECmpResult adt_valuecompare(adt_Value obj, adt_Value other);
 adt_API size_t adt_valuehash(adt_Value val);
 
 
-/**
- * @}
- * @ingroup adt_util_val
- * @{
- */
-
 adt_API void adt_Value_init(adt_Value* V);
+adt_API adt_Value adt_Value_for(adt_EValueType vtype);
 adt_API adt_Value adt_Value_none();
 adt_API adt_Value adt_Value_end();
+#define adtFOR(t) adt_Value_for(t)
 #define adtNONE adt_Value_none()
 #define adtEND adt_Value_end()
 
 adt_API adt_Value adt_Value_container(adt_Container *C);
-adt_API adt_Value adt_Value_pair(adt_Pair *P);
-adt_API adt_Value adt_Value_node(adt_Node *N);
 adt_API adt_Value adt_Value_iterator(adt_Iterator *I);
 #define adtCTNR(C) adt_Value_container(C)
-#define adtPAIR(P) adt_Value_pair(P)
-#define adtNODE(N) adt_Value_node(N)
 #define adtITER(I) adt_Value_iterator(I)
 
 adt_API adt_Value adt_Value_char(char c);
@@ -76,7 +63,7 @@ adt_API adt_Value adt_Value_wchar(wchar_t wc);
 #define adtPD(x) adt_Value_ptrdiff(x)
 #define adtW(x) adt_Value_wchar(x)
 
-#define adt1() adtI(1)
-#define adt0() adtI(0)
+#define adt1 adtI(1)
+#define adt0 adtI(0)
 
 #endif

@@ -1,5 +1,5 @@
 
-WAF=waf -j2
+WAF=./waf -j2
 OUT=./build
 
 all: build
