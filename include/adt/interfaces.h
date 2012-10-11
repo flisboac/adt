@@ -39,20 +39,20 @@ struct adt_Api_t {
 
 struct adt_Container_t {
 
-    /*
-     * This is the primary category for the container.
+    /**
+     * The primary category for the container.
      * This field is used to determine which API to use in case of ambiguities
      * regarding data access, because a container may have other types.
      */
     adt_ECategory cat;
 
-    /*
+    /**
      * A pointer to the array of API's supported by this container.
      * It must have at least one data access API to be actually usable.
      */
     const adt_Api *api;
 
-    /*
+    /**
      * Stores the last error ocurred when using the container.
      */
     adt_EEcode ecode;
@@ -61,7 +61,8 @@ struct adt_Container_t {
 
 struct adt_Iterator_t {
 
-    adt_IteratorApi *api;
+    const adt_IteratorApi *api;
+    adt_EIteratorMode mode;
     adt_FIterate fn;
     void *fnstate;
     adt_EEcode ecode;
@@ -161,7 +162,6 @@ struct adt_IteratorApi_t {
      * Iteration state.
      */
 
-    adt_EIteratorMode (*getmode)(adt_Iterator *I);
     adt_Container* (*getcontainer)(adt_Iterator *I);
     int (*hasstarted)(adt_Iterator *I);
     int (*hasnext)(adt_Iterator *I);
@@ -218,10 +218,10 @@ struct adt_ListApi_t {
      * with iterators.
      */
 
-    adt_EEcode (*rotl)(adt_Container *C, size_t count);
-    adt_EEcode (*rotr)(adt_Container *C, size_t count);
-    adt_EEcode (*crotl)(adt_Container *C, size_t count);
-    adt_EEcode (*crotr)(adt_Container *C, size_t count);
+    size_t (*rotl)(adt_Container *C, size_t count);
+    size_t (*rotr)(adt_Container *C, size_t count);
+    size_t (*crotl)(adt_Container *C, size_t count);
+    size_t (*crotr)(adt_Container *C, size_t count);
 };
 
 
@@ -231,7 +231,7 @@ struct adt_SetApi_t {
      * Access
      */
 
-    adt_EEcode (*put)(adt_Container *C, adt_Value val);
+    adt_EEcode (*set)(adt_Container *C, adt_Value val);
     adt_Value (*remove)(adt_Container *C, adt_Value key);
 
     /*
@@ -248,7 +248,8 @@ struct adt_MapApi_t {
      * Access
      */
 
-    adt_Value (*put)(adt_Container *C, adt_Value val, va_list keys);
+    adt_Value (*set)(adt_Container *C, adt_Value val, va_list keys);
+    adt_Value (*get)(adt_Container *C, va_list args);
     adt_Value (*remove)(adt_Container *C, va_list keys);
 
     /*
@@ -262,7 +263,7 @@ struct adt_MapApi_t {
 struct adt_BagApi_t {
 
     size_t (*getoccurrences)(adt_Container *C, va_list keys);
-    adt_Value (*removeoccurrences)(adt_Container *C, size_t amount, va_list keys);
+    size_t (*removeoccurrences)(adt_Container *C, size_t amount, va_list keys);
 };
 
 

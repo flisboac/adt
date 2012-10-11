@@ -17,28 +17,30 @@
     const adt_BagApi *bagapi = GETAPI(C, bag); \
     const adt_HashableApi *hashapi = GETAPI(C, hash)
 
-#define EXECNORET(C, api, name, args) \
+#define EXECNORET(C, api, name, args, none) \
 	if (api && api->name) { \
 		api->name args; \
 	} else { \
 		if (C) C->ecode = adt_ERRSUPP; \
+		none; \
 	}
 
-#define EXEC(C, api, name, ret, args) \
+#define EXEC(C, api, name, ret, args, none) \
 	if (api && api->name) { \
 		ret = api->name args; \
 	} else { \
 		if (C) C->ecode = adt_ERRSUPP; \
+		none; \
 	}
 
-#define EXECECODE(C, api, name, ret, args) \
+#define EXECECODE(C, api, name, ret, args, none) \
 	if (api && api->name) { \
 		ret = api->name args; \
 	} else { \
 		ret = adt_ERRSUPP; \
 		if (C) C->ecode = ret; \
+		none; \
 	}
-
 
 /*
  * [ D I S P O S A L ]
@@ -53,7 +55,7 @@ adt_dispose(
 
 	int ret = 0;
 	DECLCTNR(C);
-	EXEC(C, ctnrapi, dispose, ret, (C));
+	EXEC(C, ctnrapi, dispose, ret, (C), {});
 	return ret;
 }
 
@@ -65,7 +67,7 @@ adt_copy(
 
 	adt_Container* ret = NULL;
 	DECLCTNR(C);
-	EXEC(C, ctnrapi, copy, ret, (C));
+	EXEC(C, ctnrapi, copy, ret, (C), {});
 	return ret;
 }
 
@@ -84,7 +86,7 @@ adt_getoptions(
 
 	adt_Options* ret = opts;
 	DECLCTNR(C);
-	EXEC(C, ctnrapi, getoptions, ret, (C, opts));
+	EXEC(C, ctnrapi, getoptions, ret, (C, opts), {});
 	return ret;
 }
 
@@ -96,7 +98,7 @@ adt_setoptions(
 
 	adt_EEcode  ret = adt_ERROR;
 	DECLCTNR(C);
-	EXEC(C, ctnrapi, setoptions, ret, (C, opts));
+	EXEC(C, ctnrapi, setoptions, ret, (C, opts), {});
 	return ret;
 }
 
@@ -108,7 +110,7 @@ adt_gethashf(
 
 	adt_FHash ret = NULL;
 	DECLAPIS(C);
-	EXEC(C, hashapi, gethashf, ret, (C));
+	EXEC(C, hashapi, gethashf, ret, (C), {});
 	return ret;
 }
 
@@ -176,6 +178,20 @@ adt_getcategories(
 	return cats;
 }
 
+
+adt_Value
+adt_getdefault(
+	adt_Container* C
+) {
+
+	adt_Value V = adtNONE;
+	adt_Options opts;
+	DECLCTNR(C);
+	EXECNORET(C, ctnrapi, getoptions, (C, &opts), {});
+	if (C && C->ecode == adt_OK) V = opts.defaultval;
+	return V;
+}
+
 /*
  * [ O P E R A T I O N S ]
  */
@@ -189,7 +205,7 @@ adt_sort(
 
 	adt_EEcode ret = adt_ERROR;
 	DECLCTNR(C);
-	EXECECODE(C, ctnrapi, sort, ret, (C, reverse));
+	EXECECODE(C, ctnrapi, sort, ret, (C, reverse), {});
 	return ret;
 }
 
@@ -204,7 +220,7 @@ adt_reserve(
 	DECLCTNR(C);
 
 	va_start(args, C);
-	EXECECODE(C, ctnrapi, reserve, ret, (C, args));
+	EXECECODE(C, ctnrapi, reserve, ret, (C, args), {});
 	va_end(args);
 
 	return ret;
@@ -221,7 +237,7 @@ adt_resize(
 	DECLCTNR(C);
 
 	va_start(args, C);
-	EXECECODE(C, ctnrapi, resize, ret, (C, args));
+	EXECECODE(C, ctnrapi, resize, ret, (C, args), {});
 	va_end(args);
 
 	return ret;
@@ -235,7 +251,7 @@ adt_freeze(
 
 	adt_EEcode ret = adt_ERROR;
 	DECLCTNR(C);
-	EXECECODE(C, ctnrapi, freeze, ret, (C));
+	EXECECODE(C, ctnrapi, freeze, ret, (C), {});
 	return ret;
 }
 
@@ -247,7 +263,7 @@ adt_swap(
 
 	adt_EEcode ret = adt_ERROR;
 	DECLCTNR(C);
-	EXECECODE(C, ctnrapi, swap, ret, (C, O));
+	EXECECODE(C, ctnrapi, swap, ret, (C, O), {});
 	return ret;
 }
 
@@ -259,7 +275,7 @@ adt_clear(
 
 	adt_EEcode ret = adt_ERROR;
 	DECLCTNR(C);
-	EXECECODE(C, ctnrapi, clear, ret, (C));
+	EXECECODE(C, ctnrapi, clear, ret, (C), {});
 	return ret;
 }
 
@@ -271,7 +287,7 @@ adt_rehash(
 
 	adt_EEcode ret = adt_ERROR;
 	DECLAPIS(C);
-	EXECECODE(C, hashapi, rehash, ret, (C));
+	EXECECODE(C, hashapi, rehash, ret, (C), {});
 	return ret;
 }
 
@@ -282,7 +298,7 @@ adt_rehash(
  */
 
 
-/* TODO Implementation */
+/* TODO Tests */
 int
 adt_has(
 	adt_Container *C, ...
@@ -290,16 +306,23 @@ adt_has(
 
 	int ret = 0;
 	va_list args;
+	DECLAPIS(C);
+
 	va_start(args, C);
-
-
-
+	if (C)
+		switch (C->cat) {
+		case adt_CAT_LIST: EXEC(C, listapi, has, ret, (C, args), {}); break;
+		case adt_CAT_SET:  EXEC(C, setapi,  has, ret, (C, va_arg(args, adt_Value)), {}); break;
+		case adt_CAT_MAP:  EXEC(C, mapapi,  has, ret, (C, args), {}); break;
+		default:           C->ecode = adt_ERRSUPP; break;
+		}
 	va_end(args);
+
 	return ret;
 }
 
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_Value
 adt_get(
 	adt_Container *C, ...
@@ -307,15 +330,21 @@ adt_get(
 
 	adt_Value ret = adtNONE;
 	va_list args;
+	DECLAPIS(C);
+
 	va_start(args, C);
-
-
-
+	if (C)
+		switch (C->cat) {
+		case adt_CAT_LIST: EXEC(C, listapi, get, ret, (C, args), {}); break;
+		case adt_CAT_MAP:  EXEC(C, mapapi,  get, ret, (C, args), {}); break;
+		default:           C->ecode = adt_ERRSUPP; break;
+		}
 	va_end(args);
+
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_Value
 adt_set(
 	adt_Container *C, ...
@@ -323,15 +352,26 @@ adt_set(
 
 	adt_Value ret = adtNONE;
 	va_list args;
+	adt_Value V;
+	DECLAPIS(C);
+
 	va_start(args, C);
+	if (C) {
+		V = va_arg(args, adt_Value);
 
-
-
+		switch (C->cat) {
+		case adt_CAT_LIST: EXEC(C, listapi, set, ret, (C, V, args), {}); break;
+		case adt_CAT_SET:  EXEC(C, setapi,  set, ret, (C, V), {}); break;
+		case adt_CAT_MAP:  EXEC(C, mapapi,  set, ret, (C, V, args), {}); break;
+		default:           C->ecode = adt_ERRSUPP; break;
+		}
+	}
 	va_end(args);
+
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_Value
 adt_remove(
 	adt_Container *C, ...
@@ -339,15 +379,22 @@ adt_remove(
 
 	adt_Value ret = adtNONE;
 	va_list args;
+	DECLAPIS(C);
+
 	va_start(args, C);
-
-
-
+	if (C)
+		switch (C->cat) {
+		case adt_CAT_LIST: EXEC(C, listapi, remove, ret, (C, args), {}); break;
+		case adt_CAT_SET:  EXEC(C, setapi,  remove, ret, (C, va_arg(args, adt_Value)), {}); break;
+		case adt_CAT_MAP:  EXEC(C, mapapi,  remove, ret, (C, args), {}); break;
+		default:           C->ecode = adt_ERRSUPP; break;
+		}
 	va_end(args);
+
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_Value
 adt_insert(
 	adt_Container *C, ...
@@ -355,16 +402,19 @@ adt_insert(
 
 	adt_Value ret = adtNONE;
 	va_list args;
+	adt_Value V;
+	DECLAPIS(C);
+
 	va_start(args, C);
-
-
-
+	V = va_arg(args, adt_Value);
+	EXEC(C, listapi, insert, ret, (C, V, args), {});
 	va_end(args);
+
 	return ret;
 }
 
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_EEcode
 adt_pushl(
 	adt_Container *C, ...
@@ -372,15 +422,18 @@ adt_pushl(
 
 	adt_EEcode ret = adt_ERROR;
 	va_list args;
+	adt_Value V;
+	DECLAPIS(C);
+
 	va_start(args, C);
-
-
-
+	V = va_arg(args, adt_Value);
+	EXECECODE(C, listapi, pushl, ret, (C, V), {});
 	va_end(args);
+
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_EEcode
 adt_pushr(
 	adt_Container *C, ...
@@ -388,108 +441,220 @@ adt_pushr(
 
 	adt_EEcode ret = adt_ERROR;
 	va_list args;
+	adt_Value V;
+	DECLAPIS(C);
+
 	va_start(args, C);
-
-
-
+	V = va_arg(args, adt_Value);
+	EXECECODE(C, listapi, pushr, ret, (C, V), {});
 	va_end(args);
+
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_Value
 adt_popl(
 	adt_Container *C
 ) {
 
 	adt_Value ret = adtNONE;
+	adt_Value V;
+	DECLAPIS(C);
+	EXEC(C, listapi, popl, ret, (C), {});
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_Value
 adt_popr(
 	adt_Container *C
 ) {
 
 	adt_Value ret = adtNONE;
+	adt_Value V;
+	DECLAPIS(C);
+	EXEC(C, listapi, popr, ret, (C), {});
 	return ret;
 }
 
 
-/* TODO Implementation */
-adt_EEcode
+/* TODO Tests */
+size_t
 adt_rotl(
 	adt_Container *C, size_t count
 ) {
 
-	adt_EEcode ret = adt_ERROR;
-	return ret;
+	adt_Value V;
+	adt_Value D = adt_getdefault(C);
+	size_t i;
+	DECLAPIS(C);
+	EXEC(C, listapi, popr, i, (C, count), {
+		for (i = 0; i < count; ++i) {
+			V = adt_popl(C);
+			if (adt_OK != C->ecode) break;
+			C->ecode = adt_pushr(C, D);
+			if (adt_OK != C->ecode) break;
+		}
+	});
+	return i;
 }
 
-/* TODO Implementation */
-adt_EEcode
+/* TODO Tests */
+size_t
 adt_rotr(
 	adt_Container *C, size_t count
 ) {
 
-	adt_EEcode ret = adt_ERROR;
-	return ret;
+	adt_Value V;
+	adt_Value D = adt_getdefault(C);
+	size_t i;
+	DECLAPIS(C);
+	EXEC(C, listapi, popr, i, (C, count), {
+		for (i = 0; i < count; ++i) {
+			V = adt_popr(C);
+			if (adt_OK != C->ecode) break;
+			C->ecode = adt_pushl(C, D);
+			if (adt_OK != C->ecode) break;
+		}
+	});
+	return i;
 }
 
-/* TODO Implementation */
-adt_EEcode
+/* TODO Tests */
+size_t
 adt_crotl(
 	adt_Container *C, size_t count
 ) {
 
 	adt_EEcode ret = adt_ERROR;
+	adt_Value V;
+	size_t i;
+	DECLAPIS(C);
+	EXEC(C, listapi, popr, i, (C, count), {
+		for (i = 0; i < count; ++i) {
+			V = adt_popl(C);
+			if (adt_OK != C->ecode) break;
+			C->ecode = adt_pushr(C, V);
+			if (adt_OK != C->ecode) break;
+		}
+	});
+	return i;
 	return ret;
 }
 
-/* TODO Implementation */
-adt_EEcode
+/* TODO Tests */
+size_t
 adt_crotr(
 	adt_Container *C, size_t count
 ) {
 
-	adt_EEcode ret = adt_ERROR;
-	return ret;
+	adt_Value V;
+	size_t i;
+	DECLAPIS(C);
+	EXEC(C, listapi, popr, i, (C, count), {
+		for (i = 0; i < count; ++i) {
+			V = adt_popr(C);
+			if (adt_OK != C->ecode) break;
+			C->ecode = adt_pushl(C, V);
+			if (adt_OK != C->ecode) break;
+		}
+	});
+	return i;
 }
 
 
-/* TODO Implementation */
+/* TODO Tests */
 size_t
 adt_getoccurrences(
 	adt_Container *C, ...
 ) {
 
 	size_t ret = 0;
+	int haskey = 0;
 	va_list args;
+	DECLAPIS(C);
+
 	va_start(args, C);
-
-
-
+	EXEC(C, bagapi, getoccurrences, ret, (C, args), {
+		if (C)
+			switch (C->cat) {
+			case adt_CAT_LIST: EXEC(C, listapi, has, haskey, (C, args), {}); break;
+			case adt_CAT_SET:  EXEC(C, setapi,  has, haskey, (C, va_arg(args, adt_Value)), {}); break;
+			case adt_CAT_MAP:  EXEC(C, mapapi,  has, haskey, (C, args), {}); break;
+			default:           C->ecode = adt_ERRSUPP; break;
+			}
+		if (haskey) ret = 1;
+	});
 	va_end(args);
+
 	return ret;
 }
 
-/* TODO Implementation */
-adt_Value
+/* TODO Tests */
+size_t
 adt_removeoccurrences(
 	adt_Container *C, size_t amount, ...
 ) {
 
 	adt_Value ret = adtNONE;
+	size_t i = 0;
+	int flag = 0;
 	va_list args;
-	va_start(args, amount);
+	DECLAPIS(C);
 
+	if (bagapi && bagapi->removeoccurrences) {
 
+		va_start(args, amount);
+		i = bagapi->removeoccurrences(C, amount, args);
+		va_end(args);
+	} else {
 
-	va_end(args);
-	return ret;
+		if (C) {
+			/* Supposed to succeed unless stated otherwise. */
+			C->ecode = adt_OK;
+
+			/* This loop will probably be run only once. */
+			for(i = 0; i < amount; i++) {
+				flag = 0;
+
+				/* Check if there's a key in the container in the index passed. */
+				va_start(args, amount);
+				switch (C->cat) {
+				case adt_CAT_LIST: EXEC(C, listapi, has, flag, (C, args), {}); break;
+				case adt_CAT_SET:  EXEC(C, setapi,  has, flag, (C, va_arg(args, adt_Value)), {}); break;
+				case adt_CAT_MAP:  EXEC(C, mapapi,  has, flag, (C, args), {}); break;
+				}
+				va_end(args);
+
+				/* If there is, remove it. */
+				if (flag) {
+
+					/* First, try to remove. */
+					flag = 0;
+					va_start(args, amount);
+					switch (C->cat) {
+					case adt_CAT_LIST: EXEC(C, listapi, remove, flag, (C, args), {}); break;
+					case adt_CAT_SET:  EXEC(C, setapi,  remove, flag, (C, va_arg(args, adt_Value)), {}); break;
+					case adt_CAT_MAP:  EXEC(C, mapapi,  remove, flag, (C, args), {}); break;
+					}
+					va_end(args);
+
+					/* If the removal was not successful, break and exit.
+					 * C->ecode is supposed to hold the reason. */
+					if (!flag) break;
+
+				/* Else, just break. All occurrences were already removed.
+				 * If any error has ourred  while checking for the existence of
+				 * the key, the reason will be in C->ecode. */
+				} else
+					break;
+			}
+		}
+	}
+
+	return i;
 }
-
 
 
 /*
@@ -497,17 +662,19 @@ adt_removeoccurrences(
  */
 
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_Iterator*
 adt_iterate(
 	adt_Container *C, adt_EIteratorMode mode
 ) {
 
 	adt_Iterator* ret = NULL;
+	DECLCTNR(C);
+	EXEC(C, ctnrapi, iterate, ret, (C, mode), {});
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_Iterator*
 adt_iterateat(
 	adt_Container *C, adt_EIteratorMode mode, ...
@@ -515,144 +682,192 @@ adt_iterateat(
 
 	adt_Iterator* ret = NULL;
 	va_list args;
+	DECLCTNR(C);
+
 	va_start(args, mode);
-
-
-
+	EXEC(C, ctnrapi, iterateat, ret, (C, mode, args), {});
 	va_end(args);
+
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
 int
 adt_Iterator_dispose(
 	adt_Iterator *I
 ) {
 
 	int ret = 0;
+	const adt_IteratorApi* iterapi = I ? I->api : NULL;
+	EXEC(I, iterapi, dispose, ret, (I), {});
 	return ret;
 }
 
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_Value
 adt_Iterator_actual(
 	adt_Iterator *I
 ) {
 
 	adt_Value ret = adtNONE;
+	const adt_IteratorApi* iterapi = I ? I->api : NULL;
+	EXEC(I, iterapi, actual, ret, (I), {});
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_Value
 adt_Iterator_actualkeys(
 	adt_Iterator *I
 ) {
 
 	adt_Value ret = adtNONE;
+	const adt_IteratorApi* iterapi = I ? I->api : NULL;
+	EXEC(I, iterapi, actualkeys, ret, (I), {});
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_Value
 adt_Iterator_next(
 	adt_Iterator *I
 ) {
 
 	adt_Value ret = adtNONE;
+	const adt_IteratorApi* iterapi = I ? I->api : NULL;
+	EXEC(I, iterapi, next, ret, (I), {});
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_Value
 adt_Iterator_previous(
 	adt_Iterator *I
 ) {
 
 	adt_Value ret = adtNONE;
+	const adt_IteratorApi* iterapi = I ? I->api : NULL;
+	EXEC(I, iterapi, previous, ret, (I), {});
 	return ret;
 }
 
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_EIteratorMode
 adt_Iterator_getmode(
 	adt_Iterator *I
 ) {
 
 	adt_EIteratorMode ret = adt_ITER_NONE;
+	if (I) ret = I->mode;
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
+adt_EEcode
+adt_Iterator_getecode(
+	adt_Iterator *I
+) {
+
+	adt_EEcode ret = adt_ERROR;
+	if (I) ret = I->ecode;
+	return ret;
+}
+
+/* TODO Tests */
+int
+adt_Iterator_getautofree(
+	adt_Iterator* I
+) {
+
+	int ret = 0;
+	if (I) ret = I->autofree;
+	return ret;
+}
+
+/* TODO Tests */
 adt_Container*
 adt_Iterator_getcontainer(
 	adt_Iterator *I
 ) {
 
 	adt_Container* ret = NULL;
+	const adt_IteratorApi* iterapi = I ? I->api : NULL;
+	EXEC(I, iterapi, getcontainer, ret, (I), {});
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
 int
 adt_Iterator_hasstarted(
 	adt_Iterator *I
 ) {
 
 	int ret = 0;
+	const adt_IteratorApi* iterapi = I ? I->api : NULL;
+	EXEC(I, iterapi, hasstarted, ret, (I), {});
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
 int
 adt_Iterator_hasnext(
 	adt_Iterator *I
 ) {
 
 	int ret = 0;
+	const adt_IteratorApi* iterapi = I ? I->api : NULL;
+	EXEC(I, iterapi, hasnext, ret, (I), {});
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
 int
 adt_Iterator_hasprevious(
 	adt_Iterator *I
 ) {
 
 	int ret = 0;
+	const adt_IteratorApi* iterapi = I ? I->api : NULL;
+	EXEC(I, iterapi, hasprevious, ret, (I), {});
 	return ret;
 }
 
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_EEcode
 adt_Iterator_set(
 	adt_Iterator *I, adt_Value val
 ) {
 
 	adt_EEcode ret = adt_ERROR;
+	const adt_IteratorApi* iterapi = I ? I->api : NULL;
+	EXECECODE(I, iterapi, set, ret, (I, val), {});
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_EEcode
 adt_Iterator_remove(
 	adt_Iterator *I
 ) {
 
 	adt_EEcode ret = adt_ERROR;
+	const adt_IteratorApi* iterapi = I ? I->api : NULL;
+	EXECECODE(I, iterapi, remove, ret, (I), {});
 	return ret;
 }
 
-/* TODO Implementation */
+/* TODO Tests */
 adt_EEcode
 adt_Iterator_compare(
 	adt_Iterator *I, adt_Iterator *O
 ) {
 
 	adt_EEcode ret = adt_ERROR;
+	const adt_IteratorApi* iterapi = I ? I->api : NULL;
+	EXECECODE(I, iterapi, compare, ret, (I, O), {});
 	return ret;
 }
 

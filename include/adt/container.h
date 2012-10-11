@@ -33,7 +33,7 @@ adt_API int adt_iscategory(adt_Container *C, adt_ECategory cat);
 adt_API adt_EEcode adt_getecode(adt_Container *C);
 adt_API adt_ECategory adt_getcategory(adt_Container *C);
 adt_API int* adt_getcategories(adt_Container *C, int* cats);
-
+adt_API adt_Value adt_getdefault(adt_Container* C);
 
 /**
  * @}
@@ -74,13 +74,13 @@ adt_API adt_Value adt_popr(adt_Container *C);
 #define adt_push adt_pushr
 #define adt_pop adt_popr
 
-adt_API adt_EEcode adt_rotl(adt_Container *C, size_t count);
-adt_API adt_EEcode adt_rotr(adt_Container *C, size_t count);
-adt_API adt_EEcode adt_crotl(adt_Container *C, size_t count);
-adt_API adt_EEcode adt_crotr(adt_Container *C, size_t count);
+adt_API size_t adt_rotl(adt_Container *C, size_t count);
+adt_API size_t adt_rotr(adt_Container *C, size_t count);
+adt_API size_t adt_crotl(adt_Container *C, size_t count);
+adt_API size_t adt_crotr(adt_Container *C, size_t count);
 
 adt_API size_t adt_getoccurrences(adt_Container *C, ...);
-adt_API adt_Value adt_removeoccurrences(adt_Container *C, size_t amount, ...);
+adt_API size_t adt_removeoccurrences(adt_Container *C, size_t amount, ...);
 
 
 /**
@@ -105,11 +105,15 @@ adt_API adt_Value adt_Iterator_previous(adt_Iterator *I);
 #define adt_iprev adt_Iterator_previous
 
 adt_API adt_EIteratorMode adt_Iterator_getmode(adt_Iterator *I);
+adt_API adt_EEcode adt_Iterator_getecode(adt_Iterator* I);
+adt_API int adt_Iterator_getautofree(adt_Iterator* I);
 adt_API adt_Container* adt_Iterator_getcontainer(adt_Iterator *I);
 adt_API int adt_Iterator_hasstarted(adt_Iterator *I);
 adt_API int adt_Iterator_hasnext(adt_Iterator *I);
 adt_API int adt_Iterator_hasprevious(adt_Iterator *I);
 #define adt_igetmode adt_Iterator_getmode
+#define adt_igetecode adt_Iterator_getecode
+#define adt_igetafree adt_Iterator_getautofree
 #define adt_igetctnr adt_Iterator_getcontainer
 #define adt_istarted adt_Iterator_hasstarted
 #define adt_ihasnext adt_Iterator_hasnext
