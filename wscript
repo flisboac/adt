@@ -12,8 +12,8 @@ APPPREFIX = APPNAME + '_'
 top = '.'
 out = 'build'
 
-sources = 'src/**.c'
-includes = 'include/**.h'
+sources = 'src/**/*.c'
+includes = 'include/**/**.h'
 doxyfile = "Doxyfile"
 
 def options(ctx):
